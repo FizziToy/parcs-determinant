@@ -1,0 +1,29 @@
+{
+  "algorithm": "modular_gaussian_elimination_crt_exact", 
+  "correct": true, 
+  "determinant": "-5507210385900436349872657211452787352858486859541843228521132119118877660608807450308223082", 
+  "efficiency": 0.4467451096349241, 
+  "matrix_config": {
+    "high": 9, 
+    "low": -9, 
+    "seed": 2026
+  }, 
+  "parallel_median_s": 0.09353208541870117, 
+  "parallel_times_s": [
+    0.10403108596801758, 
+    0.09334397315979004, 
+    0.09353208541870117
+  ], 
+  "prime_count": 12, 
+  "registered_workers": 4, 
+  "repetitions": 3, 
+  "sequential_median_s": 0.16714000701904297, 
+  "sequential_times_s": [
+    0.16714000701904297, 
+    0.1666259765625, 
+    0.18737506866455078
+  ], 
+  "size": 64, 
+  "speedup": 1.7869804385396963, 
+  "workers": 4
+}

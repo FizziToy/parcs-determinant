@@ -1,0 +1,8 @@
+{
+  "size": 64,
+  "workers": 3,
+  "repetitions": 3,
+  "seed": 2026,
+  "low": -9,
+  "high": 9
+}
