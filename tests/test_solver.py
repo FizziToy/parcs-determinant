@@ -108,3 +108,21 @@ class DeterminantTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class ParallelStructureTests(unittest.TestCase):
+    def test_split_tasks_when_not_divisible(self):
+        from solver import split_tasks
+        primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
+        batches = split_tasks(primes, 4)
+        self.assertEqual(batches, [[2, 11, 23], [3, 13, 29], [5, 17], [7, 19]])
+
+    def test_reduce_rejects_missing_result(self):
+        from solver import reduce_results
+        with self.assertRaises(RuntimeError):
+            reduce_results([101, 103], [[(101, 4)]])
+
+    def test_reduce_rejects_duplicate_result(self):
+        from solver import reduce_results
+        with self.assertRaises(RuntimeError):
+            reduce_results([101], [[(101, 4)], [(101, 4)]])
