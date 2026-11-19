@@ -1,0 +1,16 @@
+{
+  "execution_model": "workers_only",
+  "timing_baseline": "one_remote_worker_including_rpc_and_reduce",
+  "mathematical_kernel_ast_unchanged": [
+    "det_mod_python",
+    "det_mod_numpy",
+    "det_mod",
+    "required_primes",
+    "crt_signed",
+    "create_matrix"
+  ],
+  "previous_archive_sha256": "b06b0706e4aabdcba245fe8ca44f754f6cea97cd5d6046e90d330ede4f8b3066",
+  "solver_sha256": "d51f30d0a5efc2adf95000411ee1837f330bb6b2c055da5ee89746cae1a77038",
+  "cloud_jobs_run": 0,
+  "local_measurements_from_20261118": "historical offline kernel measurements, not workers-only RPC timings"
+}

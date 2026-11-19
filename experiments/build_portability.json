@@ -1,0 +1,6 @@
+{
+  "benchmark_solver_sha256": "1845cee8dd0603148e7ce62b74651793622d933f510aff1c844ab3690d97a6f6",
+  "distribution_solver_sha256": "a37c3e508574091f37958ea954e6cfd294aedf7c8dc483041e36e47933186cd9",
+  "change": "CRLF to LF in generated solver only",
+  "normalized_bytes_identical": true
+}

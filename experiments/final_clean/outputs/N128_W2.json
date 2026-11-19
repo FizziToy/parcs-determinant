@@ -1,0 +1,29 @@
+{
+  "algorithm": "modular_gaussian_elimination_crt_exact",
+  "correct": true,
+  "determinant": "-408125539013140632385966475957188559842283765310625522076295244307239879958812788284268676972214989528487735972350995861728163250567638778551587535519195983407545954159941502063902138204388360238464261",
+  "efficiency": 0.48317614766769534,
+  "execution_model": "workers_only",
+  "matrix_config": {
+    "seed": 2026
+  },
+  "parallel_median_s": 0.419191837310791,
+  "parallel_times_s": [
+    0.419191837310791,
+    0.396014928817749,
+    0.4533841609954834
+  ],
+  "prime_count": 26,
+  "registered_workers": 4,
+  "repetitions": 3,
+  "sequential_median_s": 0.4050869941711426,
+  "sequential_times_s": [
+    0.43764495849609375,
+    0.4050869941711426,
+    0.403810977935791
+  ],
+  "size": 128,
+  "speedup": 0.9663522953353907,
+  "timing_baseline": "one_remote_worker_including_rpc_and_reduce",
+  "workers": 2
+}

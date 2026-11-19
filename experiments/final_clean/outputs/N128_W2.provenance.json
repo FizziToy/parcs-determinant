@@ -1,0 +1,16 @@
+{
+  "job_name": "DET_128_W2",
+  "config": {
+    "size": 128,
+    "workers": 2,
+    "repetitions": 3,
+    "seed": 2026
+  },
+  "solver_sha256": "d51f30d0a5efc2adf95000411ee1837f330bb6b2c055da5ee89746cae1a77038",
+  "submitted_utc": "2026-11-19T09:01:44.309064+00:00",
+  "status": "completed",
+  "job_id": 1,
+  "source": "parcs_http_api",
+  "output_sha256": "37cee197c0edc2731a21dd66ebe5d3d226eebdfa4709db24b1d3da4ccc2b6e4b",
+  "downloaded_utc": "2026-11-19T09:01:52.335640+00:00"
+}

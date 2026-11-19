@@ -1,0 +1,12 @@
+{
+  "environment": "local_windows_not_parcs",
+  "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+  "numpy": "2.3.5",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "solver_sha256": "1845cee8dd0603148e7ce62b74651793622d933f510aff1c844ab3690d97a6f6",
+  "seed": 2026,
+  "repetitions": 3,
+  "low": -9,
+  "high": 9,
+  "metric": "full_sequential_modular_elimination_and_crt_excluding_preparation"
+}

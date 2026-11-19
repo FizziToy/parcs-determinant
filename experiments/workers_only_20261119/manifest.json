@@ -1,0 +1,144 @@
+{
+  "project": "parcs-514519",
+  "zone": "us-central1-a",
+  "execution_model": "workers_only",
+  "timing_baseline": "one_remote_worker_including_rpc_and_reduce",
+  "solver_sha256": "d51f30d0a5efc2adf95000411ee1837f330bb6b2c055da5ee89746cae1a77038",
+  "status": "prepared_not_executed",
+  "low": -9,
+  "high": 9,
+  "jobs": [
+    {
+      "name": "N128_W1",
+      "input": "inputs/input_N128_W1.json",
+      "config": {
+        "size": 128,
+        "workers": 1,
+        "repetitions": 3,
+        "seed": 2026
+      },
+      "output": "outputs/N128_W1.json"
+    },
+    {
+      "name": "N128_W2",
+      "input": "inputs/input_N128_W2.json",
+      "config": {
+        "size": 128,
+        "workers": 2,
+        "repetitions": 3,
+        "seed": 2026
+      },
+      "output": "outputs/N128_W2.json"
+    },
+    {
+      "name": "N128_W3",
+      "input": "inputs/input_N128_W3.json",
+      "config": {
+        "size": 128,
+        "workers": 3,
+        "repetitions": 3,
+        "seed": 2026
+      },
+      "output": "outputs/N128_W3.json"
+    },
+    {
+      "name": "N128_W4",
+      "input": "inputs/input_N128_W4.json",
+      "config": {
+        "size": 128,
+        "workers": 4,
+        "repetitions": 3,
+        "seed": 2026
+      },
+      "output": "outputs/N128_W4.json"
+    },
+    {
+      "name": "N256_W1",
+      "input": "inputs/input_N256_W1.json",
+      "config": {
+        "size": 256,
+        "workers": 1,
+        "repetitions": 3,
+        "seed": 2026
+      },
+      "output": "outputs/N256_W1.json"
+    },
+    {
+      "name": "N256_W2",
+      "input": "inputs/input_N256_W2.json",
+      "config": {
+        "size": 256,
+        "workers": 2,
+        "repetitions": 3,
+        "seed": 2026
+      },
+      "output": "outputs/N256_W2.json"
+    },
+    {
+      "name": "N256_W3",
+      "input": "inputs/input_N256_W3.json",
+      "config": {
+        "size": 256,
+        "workers": 3,
+        "repetitions": 3,
+        "seed": 2026
+      },
+      "output": "outputs/N256_W3.json"
+    },
+    {
+      "name": "N256_W4",
+      "input": "inputs/input_N256_W4.json",
+      "config": {
+        "size": 256,
+        "workers": 4,
+        "repetitions": 3,
+        "seed": 2026
+      },
+      "output": "outputs/N256_W4.json"
+    },
+    {
+      "name": "N512_W1",
+      "input": "inputs/input_N512_W1.json",
+      "config": {
+        "size": 512,
+        "workers": 1,
+        "repetitions": 3,
+        "seed": 2026
+      },
+      "output": "outputs/N512_W1.json"
+    },
+    {
+      "name": "N512_W2",
+      "input": "inputs/input_N512_W2.json",
+      "config": {
+        "size": 512,
+        "workers": 2,
+        "repetitions": 3,
+        "seed": 2026
+      },
+      "output": "outputs/N512_W2.json"
+    },
+    {
+      "name": "N512_W3",
+      "input": "inputs/input_N512_W3.json",
+      "config": {
+        "size": 512,
+        "workers": 3,
+        "repetitions": 3,
+        "seed": 2026
+      },
+      "output": "outputs/N512_W3.json"
+    },
+    {
+      "name": "N512_W4",
+      "input": "inputs/input_N512_W4.json",
+      "config": {
+        "size": 512,
+        "workers": 4,
+        "repetitions": 3,
+        "seed": 2026
+      },
+      "output": "outputs/N512_W4.json"
+    }
+  ]
+}

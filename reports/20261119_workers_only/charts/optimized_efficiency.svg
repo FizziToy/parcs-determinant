@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg
+  PUBLIC '-//W3C//DTD SVG 1.0//EN'
+  'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>
+<svg width="600" height="265" preserveAspectRatio="xMinYMin meet" viewBox="0 0 600 265" xmlns="http://www.w3.org/2000/svg" version="1.0" fill-rule="evenodd" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<title>...</title>
+	<desc>...</desc>
+	<clipPath id="clip">
+		<rect x="0" y="0" width="600" height="265"/>
+	</clipPath>
+	<g id="group" transform="scale(1,-1) translate(0,-265)" style="clip-path: url(#clip)">
+		<g transform="">
+			<text x="206.31" y="246" style="font-family: Helvetica; font-size: 12px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,492) scale(1,-1)">OPTIMIZED PARCS / missing data</text>
+			<text x="15" y="224" style="font-family: Helvetica; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,448) scale(1,-1)">S / workers</text>
+			<path d="M 62,54 L 562,54 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+			<path d="M 62,54 L 62,212 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+			<path d="M 62,51 L 62,54 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+			<text x="59.5" y="40" style="font-family: Times-Roman; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,80) scale(1,-1)">1</text>
+			<path d="M 228.666667,51 L 228.666667,54 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+			<text x="226.16666666666666" y="40" style="font-family: Times-Roman; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,80) scale(1,-1)">2</text>
+			<path d="M 395.333333,51 L 395.333333,54 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+			<text x="392.8333333333333" y="40" style="font-family: Times-Roman; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,80) scale(1,-1)">3</text>
+			<path d="M 562,51 L 562,54 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+			<text x="559.5" y="40" style="font-family: Times-Roman; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,80) scale(1,-1)">4</text>
+			<text x="292.785" y="31" style="font-family: Times-Roman; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,62) scale(1,-1)">Workers</text>
+			<text x="198.5425" y="144" style="font-family: Times-Roman; font-size: 15px;fill: rgb(33%,33%,33%); stroke:none;" transform="translate(0,288) scale(1,-1)">No optimized PARCS measurements</text>
+			<text x="201.856" y="120" style="font-family: Times-Roman; font-size: 12px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,240) scale(1,-1)">12 configurations / 36 repeats are NOT RUN</text>
+		</g>
+	</g>
+</svg>

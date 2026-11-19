@@ -1,0 +1,21 @@
+{
+  "execution_model": "workers_only",
+  "tests_with_numpy": {
+    "passed": 28,
+    "skipped": 0
+  },
+  "tests_without_numpy": {
+    "passed": 25,
+    "skipped": 3
+  },
+  "compileall": "passed",
+  "mathematical_calculations_on_master": false,
+  "master_local_fallback": false,
+  "cloud_jobs_completed": 0,
+  "prepared_jobs": 12,
+  "prepared_paired_repetitions": 36,
+  "historical_results_unchanged": true,
+  "docx_pages_visually_reviewed": 8,
+  "docx_renderer": "Microsoft Word COM and pypdfium2; LibreOffice unavailable",
+  "solver_sha256": "d51f30d0a5efc2adf95000411ee1837f330bb6b2c055da5ee89746cae1a77038"
+}

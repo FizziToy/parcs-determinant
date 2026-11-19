@@ -6,12 +6,15 @@ from pathlib import Path
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--sizes', nargs='+', type=int, default=[64, 128, 192])
+    parser.add_argument('--sizes', nargs='+', type=int, default=[128, 256, 512])
     parser.add_argument('--workers', nargs='+', type=int, default=[1, 2, 3, 4])
     parser.add_argument('--repetitions', type=int, default=3)
     parser.add_argument('--seed', type=int, default=2026)
     parser.add_argument('--out', type=Path, default=Path('inputs'))
     args = parser.parse_args()
+    planned = [args.out / f'n{n}_p{p}.txt' for n in args.sizes for p in args.workers]
+    if any(path.exists() for path in planned):
+        raise SystemExit('Input files already exist. Choose a new --out directory.')
     args.out.mkdir(parents=True, exist_ok=True)
     for n in args.sizes:
         for p in args.workers:

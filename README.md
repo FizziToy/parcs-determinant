@@ -1,222 +1,101 @@
-# PARCS-Python — паралельне обчислення визначника матриці (Cloud Computing Lab 1)
+# PARCS: exact matrix determinant
 
-**Тема:** «Паралельне обчислення визначника цілочисельної матриці із застосуванням PARCS-Python у Google Cloud».  
-**Реалізація:** точний детермінант; модульне виключення Гауса; незалежні прості модулі; китайська теорема про лишки (CRT).  
-**Мови:** `solver.py` сумісний із Python **2.7** (для старої PARCS) і Python 3 (для локальної перевірки); інструменти й тести — Python 3.10+.
+The program calculates an **exact integer determinant** via modular Gaussian
+elimination and the Chinese Remainder Theorem (CRT).
 
-> **Статус перевірки:** математична частина та локальний симулятор RPC перевірені автоматичними тестами. Запуск у реальному PARCS / Google Cloud не перевірено в цьому середовищі; його потрібно виконати у власному акаунті Google Cloud. Не підмінюй локальне тестування даними хмарних експериментів.
+## Parallel idea
 
-## 1. Як працює алгоритм
+1. **Master** reads the configuration and asks the first **Worker** to prepare
+   the matrix and choose enough prime moduli. Master performs no matrix mathematics.
+2. `split_tasks()` divides **primes**, not rows of the matrix, between workers.
+3. **Map**: each worker receives the whole matrix and a *different* subset of primes;
+   `mymap()` calculates `det(A) % p` for each of its primes.
+4. **Worker Reduce**: Master calls `reduce_determinant()` on the first Worker;
+   `myreduce()` checks the residues and reconstructs the exact signed determinant there.
+5. The program compares one remote Worker against the requested remote Workers,
+   and saves median timings, speedup and efficiency.
 
-Для цілочисельної квадратної матриці `A` розміру `n×n`:
+This is **not** block-row Gaussian elimination. It is parallelism over independent
+modular determinant computations. The custom Python threads overlap the RPC
+calls; the mathematical calculations execute on the remote PARCS workers.
 
-1. За нерівністю Адамара обчислюємо верхню межу: `det(A)^2 ≤ B² = ∏ᵢ ∑ⱼ aᵢⱼ²`.
-2. Добираємо різні прості числа `p₁,...,pₖ` так, щоб `M² > 4B²`, де `M = ∏pᵢ`. Отже, `M > 2|det(A)|`.
-3. Для кожного модуля незалежно обчислюємо `det(A) mod p` виключенням Гауса в полі `F_p` (складність `O(n³)` для одного модуля).
-4. Розподіляємо прості модулі на `p` неперетинних пакетів і запускаємо їх на `p` PARCS-воркерах (`Solver.det_mod_batch`).
-5. Відправляємо RPC-запити до воркерів **одночасно через окремі потоки** (`threading.Thread`), очікуємо всі відповіді та повертаємо залишки на master і відновлюємо **точний цілий** визначник за CRT (унікальність забезпечує `M > 2|det(A)|`).
-6. Для тієї самої матриці виконуємо **послідовний** варіант (ті самі прості модулі та `det_mod`), порівнюємо точні результати, вимірюємо час.
+## Files
 
-У вихідному JSON є медіанний час за 3 повторення, прискорення `S = T_seq / T_parallel` та ефективність `E = S / p`. Паралельний час включає передачу даних на воркери, віддалені обчислення та CRT; послідовний — модульні обчислення й CRT. Генерація матриці й вибір простих модулів здійснюються поза обома таймерами. Це коректне порівняння однакової обчислювальної роботи, але апаратні відмінності master/worker треба вказати у звіті.
+| File | Role |
+| --- | --- |
+| `src/matrix_math.py` | Matrix generation, modular Gaussian elimination, CRT |
+| `src/parallel.py` | Task distribution, parallel RPC dispatch, reduce |
+| `src/measurements.py` | Repeat benchmark, check equality, median time |
+| `src/solver_main.py` | PARCS `Solver` class: Master, Map, Reduce |
+| `build_solver.py` | Bundle modules into one stand-alone file for the PARCS web uploader |
+| `solver.py` | Generated file: upload to PARCS, **do not edit directly** |
+| `tests/test_solver.py` | Unit tests and simulated workers |
 
-## 2. Структура репозиторію
-
-```text
-parcs-determinant/
-├── solver.py                  # ЄДИНИЙ файл, який завантажуєш у PARCS як Solution File
-├── inputs/                   # 12 згенерованих Input File для 3 розмірів × 4 рівнів p
-├── outputs/                  # сюди зберігати фактичні Output File (після запусків)
-├── tools/
-│   ├── generate_inputs.py    # генерація повторюваних експериментів
-│   └── analyze_results.py    # таблиця результатів CSV + графіки (з реальних output)
-├── tests/test_solver.py      # 8 автоматизованих тестів, зокрема незалежна перевірка
-├── cloud/
-│   ├── master-startup.sh
-│   ├── worker-startup.sh
-│   ├── create_cluster.sh
-│   └── delete_cluster.sh
-└── docs/                     # шаблон звіту Word
-```
-
-## 3. Перед Google Cloud: перевірка локально
-
-Відкрий PowerShell, перейди у папку розпакованого ZIP:
-
-```powershell
-cd "$HOME\Downloads\parcs-determinant"
-py -m unittest discover -s tests -v
-```
-
-Очікується `Ran 8 tests ... OK`. Тести не потребують `Pyro4`, Google Cloud чи реальних воркерів. Для перегенерації файлів:
-
-```powershell
-py tools/generate_inputs.py
-```
-
-Для невеликої перевірки через PARCS із одним воркером можна задати `{ "size": 16, "workers": 1, "repetitions": 1, "seed": 2026, "low": -9, "high": 9 }`.
-
-## 4. Реєстрація Google Cloud (FREE trial)
-
-1. Перейди на <https://cloud.google.com/free>, натисни **Get started for free**. Потрібен Google-акаунт; для підтвердження особи зазвичай просять платіжну картку. Перевір статус і залишок trial в **Billing → Overview**.
-2. Відкрий <https://console.cloud.google.com/>, створи проєкт через селектор проєктів (угорі) → **New project**. Запам'ятай саме **Project ID**, не display name.
-3. Увімкни білінг для цього проєкту (якщо не підключено). Переконайся, що trial активний.
-4. У верхній панелі Google Cloud Console натисни значок **Activate Cloud Shell** (`>_`). Це Linux-термінал з установленим `gcloud`: не потрібно ставити Google Cloud SDK на Windows.
-
-**Увага до вартості:** `e2-small` не входить до «always-free» Compute Engine. Тут використовується саме **пробний кредит**, якщо він доступний. Один завжди безкоштовний `e2-micro` **не** означає 5 безкоштовних ВМ; диски, зовнішні IPv4 і трафік теж можуть споживати кредит / коштувати грошей. Не оновлюй без потреби акаунт до повністю платного; постав бюджетне сповіщення (це не hard cap); після експериментів ВИДАЛИ ресурси. Якщо кредиту немає — зупинись і погодь іншу конфігурацію, не створюй платні ВМ випадково.
-
-## 5. Як завантажити цей проєкт у Cloud Shell
-
-1. Розпакуй ZIP на комп'ютері для локальних тестів, але **не** розпаковуй перед завантаженням у Cloud Shell.
-2. У вікні **Cloud Shell** натисни меню з трьома крапками `⋮` → **Upload** → вибери файл `parcs-determinant.zip`.
-3. У Cloud Shell введи (кожну команду окремо):
+## Build and test
 
 ```bash
-unzip -o parcs-determinant.zip
-cd parcs-determinant
-gcloud auth list
-gcloud config set project YOUR_PROJECT_ID
+python3 build_solver.py
+python3 -m unittest discover -s tests -v
+python3 -m py_compile solver.py
 ```
 
-Замінюй `YOUR_PROJECT_ID` на своє значення, наприклад `parcs-lab-2026-abc123` (це **приклад**, не копіюй буквально). Якщо проєкт уже має активний billing, `gcloud` працюватиме від імені Cloud Shell акаунта.
+## PARCS input example
 
-## 6. Розгортання PARCS у Compute Engine (сучасний метод, 2026)
+```json
+{"size": 64, "workers": 4, "repetitions": 3, "seed": 2026}
+```
 
-У Cloud Shell у папці `parcs-determinant` введи:
+Upload `solver.py` as Code and the JSON file as Input. The PARCS cluster must
+have at least the requested number of workers registered.
+
+## Optimized exact kernels and experiments
+
+The standalone solver still works without mathematical dependencies. Its Python
+kernel caches row tails and uses list comprehensions. If NumPy is installed,
+matrices of size 32 or larger use exact `int64` outer-product elimination.
+No floating-point determinant is used. The accelerated kernel is selected only
+when `p*(p-1) <= 2**63-1`; larger primes fall back to Python integers. Matrix
+entries are reduced modulo p before conversion, so arbitrarily large input
+integers remain supported. Generated matrix sizes now include 512.
+
+For a comparable cloud benchmark, install/check the SAME NumPy version on the
+four workers before the series. Master does not need NumPy. The stock PARCS image uses
+Python 2.7; `cloud/install_numpy_existing.sh` optionally installs NumPy 1.16.6
+there. Local validation used Python 3.12 and NumPy 2.3.5; the legacy cloud
+environment still needs a real smoke test. Without NumPy the Python kernel is
+used automatically.
+
+The existing `results.csv`, `outputs/` and report template are historical and
+preserved. They are not results of the optimized solver.
+
+* [Ukrainian audit](docs/OPTIMIZATION_AUDIT_UK.md)
+* [Exact Cloud Shell transfer and execution commands](docs/CLOUD_RUN_UK.md)
+* `experiments/local_kernels_20261118/`: actual local per-prime comparisons
+* `experiments/local_exact_20261118/`: actual full local exact computations
+* `experiments/workers_only_20261119/`: current 12-job plan; no new cloud results
+
+Master only coordinates preparation, Map and Worker Reduce, measures time,
+compares returned answers and writes output. The existing `sequential_*` JSON
+fields now measure **one remote Worker including RPC and Worker Reduce**.
+`parallel_*` uses the same path with the requested number of Workers.
+Output adds `execution_model=workers_only` and a `timing_baseline` marker.
+The runner/analyzer reject the older master-computed baseline. Previous plans,
+reports, archives and local kernel measurements remain preserved as historical data.
+
+New experiment tools refuse to overwrite data. Prepare a fresh directory for
+each series and analyze only its verified output/provenance pairs:
 
 ```bash
-WORKER_COUNT=1 bash cloud/create_cluster.sh
+python3 tools/prepare_experiments.py --out experiments/my_new_run
+python3 tools/run_cloud_experiments.py --run experiments/my_new_run --check-only
+python3 tools/run_cloud_experiments.py --run experiments/my_new_run
+python3 tools/analyze_experiments.py --run experiments/my_new_run --out analysis/my_new_run --plots
 ```
 
-Скрипт вмикає Compute Engine API, створює вузьке **внутрішнє** firewall-правило лише між ВМ із тегом `parcs-node`, створює `parcs-master` і `parcs-worker-1` на базі **Container-Optimized OS (COS)**. На старті ОС через startup script запускає офіційний контейнер `docker.io/hummer12007/parcs-node:latest` з `--network host`.
+`--resume` recovers a recorded remote job or preserves verified completed jobs
+without posting duplicates. A lost connection after submission requires
+inspection of `/jobs`; the runner never retries an ambiguous submission.
 
-**Чому не команда з методички?** `gcloud compute instances create-with-container` використовує старий container startup agent (konlet), який вимкнули для нових розгортань 31.07.2026. У цьому проєкті — `gcloud compute instances create` плюс `--metadata-from-file startup-script=...`, рекомендований сучасний шлях.
-
-**Контроль:**
-
-```bash
-gcloud compute instances list --filter='name~^parcs-'
-gcloud compute ssh parcs-master --zone us-central1-a --command='sudo docker ps'
-gcloud compute ssh parcs-worker-1 --zone us-central1-a --command='sudo docker ps'
-```
-
-Мають з’явитися активні контейнери `parcs-node`. Якщо контейнера немає, перевір:
-
-```bash
-gcloud compute ssh parcs-master --zone us-central1-a --command='sudo docker ps -a'
-gcloud compute ssh parcs-master --zone us-central1-a --command='sudo docker logs parcs-node'
-gcloud compute ssh parcs-worker-1 --zone us-central1-a --command='sudo docker logs parcs-node'
-```
-
-Якщо Docker Hub не віддає застарілий образ або legacy Python 2 залежності падають, ця частина потребуватиме адаптації; **не стверджуй у звіті, що розгортання вдалося, доки не побачиш активний PARCS та воркери**. Docker image з методички взято з оригінального репозиторію автора.
-
-## 7. Як відкрити сайт PARCS БЕЗ публічного firewall
-
-У Cloud Shell відкрий SSH-тунель:
-
-```bash
-gcloud compute ssh parcs-master --zone us-central1-a -- -N -L 8080:127.0.0.1:8080
-```
-
-Не закривай цю сесію. Над терміналом натисни **Web Preview** (іконка браузера) → **Preview on port 8080**. Це відкриє сайт PARCS, зокрема сторінку **Workers**. Має бути **1 зареєстрований воркер**. Прямий зовнішній порт 8080 ми навмисно не відкривали.
-
-Якщо Web Preview не відкривається, перевір, що SSH-тунель запущено; для діагностики у **другій вкладці Cloud Shell** спробуй `curl -I http://localhost:8080`.
-
-## 8. Перший реальний запуск — перевірка
-
-У вебінтерфейсі PARCS обери **Add job**. Потрібно два файли:
-
-- **Solution File** → `solver.py` (однаковий для всіх запусків).
-- **Input File** → `inputs/n64_p1.txt` (матриця `64×64`, обчислення на 1 воркері).
-
-Натисни кнопку відправлення задачі, перейди на **Jobs**, дочекайся статусу завершення. У детальній сторінці/за посиланням задачі завантаж **Output File** та збережи як `outputs/n64_p1.txt`. Якщо статус Failed, переглянь причину та логи Docker на master.
-
-У output-файлі буде JSON з полями `correct`, `size`, `workers`, `determinant`, `sequential_median_s`, `parallel_median_s`, `speedup`, `efficiency`. **`correct: true` означає фактичне порівняння двох алгоритмів, а не попередньо підставлений результат.**
-
-## 9. Розгортаємо до 4 воркерів та робимо всі експерименти
-
-Повернися у Cloud Shell, де стоїш у папці `parcs-determinant` (можна відкрити другу вкладку Cloud Shell, щоб тунель залишався відкритим):
-
-```bash
-WORKER_COUNT=4 bash cloud/create_cluster.sh
-```
-
-**Перевір Workers: мають бути 4 вузли.** Якщо квоти CPU не вистачає, не вгадуй із налаштуваннями: перевір повідомлення `gcloud` і зменш навантаження або обери іншу зону/тип машин у межах доступного кредиту (без підтвердження це не гарантовано).
-
-Запускай усі 12 файлів із `inputs/` по одному. Для кожного вибирай той самий `solver.py`. Кожного разу завантажуй PARCS Output File та зберігай із **точно такою ж назвою**, як вхідний файл, у локальній папці `outputs/`. Не переплутай `n64_p1` та `n192_p4`.
-
-| Розмір | 1 воркер | 2 воркери | 3 воркери | 4 воркери |
-|---|---|---|---|---|
-| 64×64 | n64_p1 | n64_p2 | n64_p3 | n64_p4 |
-| 128×128 | n128_p1 | n128_p2 | n128_p3 | n128_p4 |
-| 192×192 | n192_p1 | n192_p2 | n192_p3 | n192_p4 |
-
-В усіх файлах однаковий `seed=2026`, однаковий діапазон елементів `[-9,9]`, `repetitions=3`. Для кожного `n` матриця однакова незалежно від `p`. Система піднімає RPC на всіх **зареєстрованих** воркерах, але код відправляє обчислення лише на перші `p`; інші не рахують жодного модуля. У звіті розрізняй **зареєстровано 4 вузли** та **використано 1–4 вузли**.
-
-**Критично:** не копіюй вимірювання з локального ПК у хмарні результати. Для доказовості зроби скріншоти Compute Engine Instances, Workers, Jobs, прикладу Output File, графіків.
-
-## 10. Формування таблиці та графіків на своєму ПК
-
-Після того як завантажиш всі `outputs/n*.txt`, у PowerShell з кореня проєкту:
-
-```powershell
-py -m pip install matplotlib
-py tools/analyze_results.py
-```
-
-Отримаєш `results.csv` і три графіки `times.png`, `speedup.png`, `efficiency.png`. У CSV усі дані беруться **тільки з фактичних JSON-запусків**. Скрипт також перевіряє, що визначник не відрізняється між запусками з різною кількістю воркерів для того самого `n`.
-
-У звіті подай формули:
-
-- `S(p)=Tseq/Tpar(p)` — прискорення;
-- `E(p)=S(p)/p` — ефективність;
-- теоретично ідеальна залежність: `S(p)=p` (без витрат на комунікацію і дисбаланс).
-
-Висновок не має автоматично стверджувати, що паралельний алгоритм швидший: для маленької матриці **витрати RPC можуть перевищувати корисну роботу**, а для великих — навпаки.
-
-## 11. GitHub
-
-На <https://github.com/new> створи **порожній** репозиторій, наприклад `parcs-determinant` (не додавай сайтівський README, якщо локально README вже є). У Windows PowerShell у корені проєкту:
-
-```powershell
-git init
-git branch -M main
-git add .
-git commit -m "Implement exact distributed determinant with PARCS-Python"
-git remote add origin https://github.com/YOUR_USERNAME/parcs-determinant.git
-git push -u origin main
-```
-
-Заміни `YOUR_USERNAME`. GitHub може попросити авторизацію через браузер. Після дослідів додай реальні `outputs/`, `results.csv`, графіки та **заповнений** `docs/Report_template.docx` окремим комітом. **Не публікуй** токени Google Cloud, приватні ключі чи дані картки.
-
-## 12. Видалення ресурсів після експериментів
-
-Повернись у Cloud Shell:
-
-```bash
-cd ~/parcs-determinant
-bash cloud/delete_cluster.sh
-gcloud compute instances list --filter='name~^parcs-'
-```
-
-Команда видаляє створені нами `parcs-master`, `parcs-worker-1` ... `parcs-worker-4` і спеціальне firewall-правило. Перевір у **Billing** витрати/залишок кредиту. **Зупинка** ВМ зазвичай прибирає витрати на CPU, але **диски та зарезервовані ресурси** можуть і далі коштувати; після захисту краще видалити ВМ повністю.
-
-## 13. Відомі обмеження та чесний опис результату
-
-- Історична платформа `Hummer12007/parcs-python` працює на **Python 2.7**, а її Dockerfile використовує старий Debian Stretch. Сумісність контейнерного образу з актуальним COS/хмарою **не була перевірена наживо** в цьому сеансі.
-- Для одночасного запуску використовуються Pyro4 RPC-виклики до фізично окремих воркерів. Обчислення всіх `det(A) mod p` виконуються тільки на відповідних вузлах; master збирає результати.
-- Час ініціалізації PARCS-роботи та підйому RPC-серверів **не включено** в `T_parallel`; воно відбувається до виклику `Solver.solve`. Якщо звіт описує «повний час задачі від натискання кнопки», це **інша** метрика і її треба виміряти окремо.
-- Python 2 та Python 3 із `random.Random(seed)` можуть мати різні деталі генерації `randint`; усі хмарні експерименти на одній PARCS-платформі відтворюються однаково. Порівняння за `seed` між Python 2 і Python 3 **не гарантує абсолютно ті самі матриці**.
-- Наявність 4 доступних воркерів у кластері — не те саме, що гарантована лінійна масштабованість. Витрати на передавання матриці, неоднаковий час пакетів і shared-vCPU впливають на вимірювання.
-
-## Перевірені джерела
-
-- Офіційна методичка курсу (додана користувачем, 2025).
-- <https://mi.csc.knu.ua/wp-content/uploads/2025/09/PARCS-Python_Google_Cloud_0925.pdf>
-- <https://github.com/Hummer12007/parcs-python>
-- <https://docs.cloud.google.com/compute/docs/deprecations/container-startup-agent-on-compute>
-- <https://docs.cloud.google.com/compute/docs/containers/migrate-containers>
-- <https://docs.cloud.google.com/free/docs/free-cloud-features>
-
-## Перевірка справжнього паралелізму
-
-У версії від 12.11.2026 RPC запити запускаються **одночасно** у `threading.Thread`, а не викликаються послідовно в циклі. Тест `test_remote_calls_really_overlap` використовує бар’єр на трьох воркерах і впаде, якщо виклики виконуються один за одним. Це локальний структурний тест, а не заміна хмарного запуску. Оригінальний PARCS надає синхронні Pyro4-проксі, тому без цього виправлення прискорення могло бути неправильно оцінене.
+`python3 -m unittest discover -s tests -v` exercises both kernels when NumPy is
+available and explicitly skips optional NumPy tests when it is absent. Simulated
+RPC/HTTP tests do not count as cloud experiments.

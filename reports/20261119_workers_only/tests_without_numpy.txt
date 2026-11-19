@@ -1,0 +1,40 @@
+test_missing_data_is_empty_and_verified_data_uses_raw_medians (test_experiments.ExperimentTests.test_missing_data_is_empty_and_verified_data_uses_raw_medians) ... ok
+test_multipart_matches_public_parcs_form_names (test_experiments.ExperimentTests.test_multipart_matches_public_parcs_form_names) ... ok
+PARCS endpoint reachable; worker records: 4
+Submitted OPT_20261119T081853_N128_W2_716ad2ed id= 7
+test_parcs_jobs_html_ready_running_and_failed (test_experiments.ExperimentTests.test_parcs_jobs_html_ready_running_and_failed) ... ok
+test_reject_wrong_configuration_and_nonfinite_times (test_experiments.ExperimentTests.test_reject_wrong_configuration_and_nonfinite_times) ... ok
+Collected N128_W2
+PARCS endpoint reachable; worker records: 4
+Preserved verified result N128_W2
+test_submit_collect_and_resume_without_duplicate_post (test_experiments.ExperimentTests.test_submit_collect_and_resume_without_duplicate_post) ... ok
+test_512_triangular_negative_determinant_full_crt (test_optimized_math.OptimizedMathTests.test_512_triangular_negative_determinant_full_crt) ... ok
+test_generator_accepts_512_and_rejects_larger (test_optimized_math.OptimizedMathTests.test_generator_accepts_512_and_rejects_larger) ... ok
+test_int64_guard_and_unsafe_prime_fallback (test_optimized_math.OptimizedMathTests.test_int64_guard_and_unsafe_prime_fallback) ... skipped 'NumPy optional backend unavailable'
+test_no_numpy_fallback_and_input_not_modified (test_optimized_math.OptimizedMathTests.test_no_numpy_fallback_and_input_not_modified) ... ok
+test_numpy_against_bareiss_small_fields_and_row_swaps (test_optimized_math.OptimizedMathTests.test_numpy_against_bareiss_small_fields_and_row_swaps) ... skipped 'NumPy optional backend unavailable'
+test_numpy_huge_inputs_reduced_before_casting (test_optimized_math.OptimizedMathTests.test_numpy_huge_inputs_reduced_before_casting) ... skipped 'NumPy optional backend unavailable'
+test_prime_selection_has_strict_integer_bound (test_optimized_math.OptimizedMathTests.test_prime_selection_has_strict_integer_bound) ... ok
+test_python_against_bareiss_and_crt (test_optimized_math.OptimizedMathTests.test_python_against_bareiss_and_crt) ... ok
+test_reduce_rejects_noncanonical_residues (test_optimized_math.OptimizedMathTests.test_reduce_rejects_noncanonical_residues) ... ok
+test_singular_mod_prime_can_have_nonzero_integer_determinant (test_optimized_math.OptimizedMathTests.test_singular_mod_prime_can_have_nonzero_integer_determinant) ... ok
+test_invalid_matrix (test_solver.DeterminantTests.test_invalid_matrix) ... ok
+test_known_matrices (test_solver.DeterminantTests.test_known_matrices) ... ok
+test_master_never_performs_mathematics_in_either_timed_mode (test_solver.DeterminantTests.test_master_never_performs_mathematics_in_either_timed_mode) ... ok
+test_one_by_one (test_solver.DeterminantTests.test_one_by_one) ... ok
+test_random_small_against_permutation_definition (test_solver.DeterminantTests.test_random_small_against_permutation_definition) ... ok
+test_remote_calls_really_overlap (test_solver.DeterminantTests.test_remote_calls_really_overlap) ... ok
+test_requires_enough_workers (test_solver.DeterminantTests.test_requires_enough_workers) ... ok
+test_row_swap_changes_sign (test_solver.DeterminantTests.test_row_swap_changes_sign) ... ok
+test_solver_with_simulated_remote_workers (test_solver.DeterminantTests.test_solver_with_simulated_remote_workers) ... ok
+test_worker_reduce_failure_has_no_local_fallback (test_solver.DeterminantTests.test_worker_reduce_failure_has_no_local_fallback) ... ok
+test_reduce_rejects_duplicate_result (test_solver.ParallelStructureTests.test_reduce_rejects_duplicate_result) ... ok
+test_reduce_rejects_missing_result (test_solver.ParallelStructureTests.test_reduce_rejects_missing_result) ... ok
+test_split_tasks_when_not_divisible (test_solver.ParallelStructureTests.test_split_tasks_when_not_divisible) ... ok
+
+----------------------------------------------------------------------
+Ran 28 tests in 1.805s
+
+OK (skipped=3)
+Done: matrix=5, workers=3, correct=True
+Done: matrix=7, workers=3, correct=True

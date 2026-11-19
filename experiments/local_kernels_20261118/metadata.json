@@ -1,0 +1,12 @@
+{
+  "environment": "local_windows_not_parcs",
+  "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "processor": "Intel64 Family 6 Model 140 Stepping 1, GenuineIntel",
+  "numpy": "2.3.5",
+  "baseline_revision": "e35ca13",
+  "seed": 2026,
+  "prime": 1000000007,
+  "solver_sha256": "1845cee8dd0603148e7ce62b74651793622d933f510aff1c844ab3690d97a6f6",
+  "metric": "one_modular_determinant_including_copy_and_conversion"
+}

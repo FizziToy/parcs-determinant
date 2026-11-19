@@ -1,0 +1,13 @@
+﻿job,size,workers,repetitions,seed,status,source,prime_count,sequential_median_s,parallel_median_s,speedup,efficiency,correct
+N128_W1,128,1,3,2026,not_run,missing,,,,,,
+N128_W2,128,2,3,2026,not_run,missing,,,,,,
+N128_W3,128,3,3,2026,not_run,missing,,,,,,
+N128_W4,128,4,3,2026,not_run,missing,,,,,,
+N256_W1,256,1,3,2026,not_run,missing,,,,,,
+N256_W2,256,2,3,2026,not_run,missing,,,,,,
+N256_W3,256,3,3,2026,not_run,missing,,,,,,
+N256_W4,256,4,3,2026,not_run,missing,,,,,,
+N512_W1,512,1,3,2026,not_run,missing,,,,,,
+N512_W2,512,2,3,2026,not_run,missing,,,,,,
+N512_W3,512,3,3,2026,not_run,missing,,,,,,
+N512_W4,512,4,3,2026,not_run,missing,,,,,,

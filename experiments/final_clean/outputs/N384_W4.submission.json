@@ -1,0 +1,12 @@
+{
+  "job_name": "DET_384_W4",
+  "config": {
+    "size": 384,
+    "workers": 4,
+    "repetitions": 3,
+    "seed": 2026
+  },
+  "solver_sha256": "d51f30d0a5efc2adf95000411ee1837f330bb6b2c055da5ee89746cae1a77038",
+  "submitted_utc": "2026-11-19T09:24:43.772736+00:00",
+  "status": "submission_intent_recorded"
+}

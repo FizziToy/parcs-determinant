@@ -10,6 +10,12 @@ def main():
     parser.add_argument('--inputs', type=Path, default=Path('outputs'))
     parser.add_argument('--out', type=Path, default=Path('results.csv'))
     args = parser.parse_args()
+    if args.out.exists():
+        raise SystemExit('CSV already exists; choose a new --out path to preserve old results.')
+    args.out.parent.mkdir(parents=True, exist_ok=True)
+    chart_names = ['times.png', 'speedup.png', 'efficiency.png']
+    if any((args.out.parent / name).exists() for name in chart_names):
+        raise SystemExit('Charts already exist; choose a fresh output directory.')
     rows = []
     expected = {}
     for path in sorted(args.inputs.glob('*.txt')):
@@ -55,7 +61,7 @@ def main():
         ax.grid(alpha=0.3)
         ax.legend()
         fig.tight_layout()
-        fig.savefig(filename, dpi=180)
+        fig.savefig(args.out.parent / filename, dpi=180)
         plt.close(fig)
         print('Saved', filename)
 
